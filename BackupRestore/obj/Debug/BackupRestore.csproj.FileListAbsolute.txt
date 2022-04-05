@@ -1,0 +1,11 @@
+D:\PTIT_HCM\Semester_8\Software Engineering Topics\Project\BackupRestore\BackupRestore\bin\Debug\BackupRestore.exe.config
+D:\PTIT_HCM\Semester_8\Software Engineering Topics\Project\BackupRestore\BackupRestore\bin\Debug\BackupRestore.exe
+D:\PTIT_HCM\Semester_8\Software Engineering Topics\Project\BackupRestore\BackupRestore\bin\Debug\BackupRestore.pdb
+D:\PTIT_HCM\Semester_8\Software Engineering Topics\Project\BackupRestore\BackupRestore\obj\Debug\BackupRestore.csproj.AssemblyReference.cache
+D:\PTIT_HCM\Semester_8\Software Engineering Topics\Project\BackupRestore\BackupRestore\obj\Debug\BackupRestore.FormLogin.resources
+D:\PTIT_HCM\Semester_8\Software Engineering Topics\Project\BackupRestore\BackupRestore\obj\Debug\BackupRestore.Properties.Resources.resources
+D:\PTIT_HCM\Semester_8\Software Engineering Topics\Project\BackupRestore\BackupRestore\obj\Debug\BackupRestore.csproj.GenerateResource.cache
+D:\PTIT_HCM\Semester_8\Software Engineering Topics\Project\BackupRestore\BackupRestore\obj\Debug\BackupRestore.csproj.CoreCompileInputs.cache
+D:\PTIT_HCM\Semester_8\Software Engineering Topics\Project\BackupRestore\BackupRestore\obj\Debug\BackupRestore.exe
+D:\PTIT_HCM\Semester_8\Software Engineering Topics\Project\BackupRestore\BackupRestore\obj\Debug\BackupRestore.pdb
+D:\PTIT_HCM\Semester_8\Software Engineering Topics\Project\BackupRestore\BackupRestore\obj\Debug\BackupRestore.FormMain.resources
