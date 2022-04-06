@@ -16,6 +16,7 @@ namespace BackupRestore
     public partial class FormMain : Form
     {
         public static Database curentDB;
+        public static BackupInfo curentBK;
 
         public FormMain()
         {
@@ -110,12 +111,6 @@ namespace BackupRestore
             String query = "SELECT position, description, backup_start_date , user_name " +
                             "FROM msdb.dbo.backupset " +
                             "WHERE  database_name = '"+ curentDB.name +"' AND type = 'D' " +
-                            "AND backup_set_id > (SELECT MAX(backup_set_id) " +
-                                                "FROM msdb.dbo.backupset " +
-                                                "WHERE media_set_id = " +
-                                                    "(SELECT  MAX(media_set_id)" +
-                                                    " FROM msdb.dbo.backupset " +
-                                                    "WHERE database_name = '"+ curentDB.name +"' AND type = 'D') AND position = 1)" +
                             "ORDER BY position DESC";
             try
             {
@@ -132,7 +127,7 @@ namespace BackupRestore
                         BackupInfo bk = new BackupInfo
                         {
                             position = reader.GetInt32(0),
-                            description = reader.GetString(1),
+                            description = reader.IsDBNull(1) ? "" : reader.GetString(1),
                             backupDateTime = reader.GetDateTime(2),
                             userBackup = reader.GetString(3)
                         };
@@ -171,8 +166,6 @@ namespace BackupRestore
         public void setListBK()
         {
             lsv_BackupVersions.Items.Clear();
-            lsv_BackupVersions.View = View.Details;
-            lsv_BackupVersions.OwnerDraw = true;
 
             List<BackupInfo> backupInfos = getVersionBKList();
             lbl_BackupCount.Text = backupInfos.Count.ToString();
@@ -180,41 +173,45 @@ namespace BackupRestore
             foreach (var item in backupInfos)
             {
                 ListViewItem row = new ListViewItem(new string[] { item.position.ToString(), item.description, item.backupDateTime.ToString("MM/dd/yyyy HH:mm:ss"), item.userBackup });
-
                 lsv_BackupVersions.Items.Add(row);
             }
         }
 
-/*        public bool CreateDevice()
+        private void lsv_BackupVersions_SelectedIndexChanged(object sender, EventArgs e)
         {
-            String currentPath = this.GetType().Assembly.Location;
 
-            String folderPath = currentPath.Substring(0, currentPath.LastIndexOf("\\"));
+        }
 
-            DirectoryInfo directoryInfo = null;
-            if (!Directory.Exists($"{folderPath}\\BackupFiles\\{curentDB.name}"))
-            {
-                directoryInfo = Directory.CreateDirectory($"{folderPath}\\BackupFiles\\{curentDB.name}");
-            }
+        /*        public bool CreateDevice()
+                {
+                    String currentPath = this.GetType().Assembly.Location;
 
-            if (directoryInfo == null)
-            {
-                QueryStrings.CurrentPathDevice = $"{folderPath}\\BackupFiles\\{curentDB.name}\\{curentDB.name}.bak";
-            }
-            else
-            {
-                QueryStrings.CurrentPathDevice = $"{directoryInfo.FullName}\\{curentDB.name}.bak";
-            }
+                    String folderPath = currentPath.Substring(0, currentPath.LastIndexOf("\\"));
 
-            IEnumerable<Boolean> result = ExecuteQuery<Boolean>.Execute(ConnectionInfo, QueryStrings.CreateDevice, (sqlDataReader) =>
-            {
-                return SqlSupport.Read<Boolean>(sqlDataReader, "");
-            });
+                    DirectoryInfo directoryInfo = null;
+                    if (!Directory.Exists($"{folderPath}\\BackupFiles\\{curentDB.name}"))
+                    {
+                        directoryInfo = Directory.CreateDirectory($"{folderPath}\\BackupFiles\\{curentDB.name}");
+                    }
 
-            this.CurrentDataBase = _currentDB;
+                    if (directoryInfo == null)
+                    {
+                        QueryStrings.CurrentPathDevice = $"{folderPath}\\BackupFiles\\{curentDB.name}\\{curentDB.name}.bak";
+                    }
+                    else
+                    {
+                        QueryStrings.CurrentPathDevice = $"{directoryInfo.FullName}\\{curentDB.name}.bak";
+                    }
 
-            return result.FirstOrDefault();
-        }*/
+                    IEnumerable<Boolean> result = ExecuteQuery<Boolean>.Execute(ConnectionInfo, QueryStrings.CreateDevice, (sqlDataReader) =>
+                    {
+                        return SqlSupport.Read<Boolean>(sqlDataReader, "");
+                    });
+
+                    this.CurrentDataBase = _currentDB;
+
+                    return result.FirstOrDefault();
+                }*/
 
     }
 }
