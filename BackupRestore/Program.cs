@@ -53,6 +53,26 @@ namespace BackupRestore
                 return null;
             }
         }
+
+        public static void ExecuteNonQuery(string query)
+        {
+            try
+            {
+                using (SqlConnection cnn = new SqlConnection(Program.GetConectionString()))
+                using (SqlCommand comm = new SqlCommand(query, cnn))
+                {
+                    cnn.Open();
+
+                    comm.ExecuteNonQuery();
+
+                    cnn.Close();
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                throw sqlEx;
+            }
+        }
     }
 
 }

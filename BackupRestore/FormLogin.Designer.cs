@@ -30,10 +30,6 @@ namespace BackupRestore
         private void InitializeComponent()
         {
             this.grb_Login = new System.Windows.Forms.GroupBox();
-            this.lbl_Err_summary = new System.Windows.Forms.Label();
-            this.lbl_Err_password = new System.Windows.Forms.Label();
-            this.lbl_Err_username = new System.Windows.Forms.Label();
-            this.lbl_Err_server = new System.Windows.Forms.Label();
             this.btn_Login = new System.Windows.Forms.Button();
             this.txt_password = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -48,10 +44,6 @@ namespace BackupRestore
             // 
             this.grb_Login.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.grb_Login.Controls.Add(this.lbl_Err_summary);
-            this.grb_Login.Controls.Add(this.lbl_Err_password);
-            this.grb_Login.Controls.Add(this.lbl_Err_username);
-            this.grb_Login.Controls.Add(this.lbl_Err_server);
             this.grb_Login.Controls.Add(this.btn_Login);
             this.grb_Login.Controls.Add(this.txt_password);
             this.grb_Login.Controls.Add(this.label3);
@@ -68,46 +60,6 @@ namespace BackupRestore
             this.grb_Login.TabIndex = 2;
             this.grb_Login.TabStop = false;
             this.grb_Login.Text = "Đăng nhập";
-            // 
-            // lbl_Err_summary
-            // 
-            this.lbl_Err_summary.AutoSize = true;
-            this.lbl_Err_summary.ForeColor = System.Drawing.Color.Red;
-            this.lbl_Err_summary.Location = new System.Drawing.Point(43, 275);
-            this.lbl_Err_summary.Name = "lbl_Err_summary";
-            this.lbl_Err_summary.Size = new System.Drawing.Size(58, 26);
-            this.lbl_Err_summary.TabIndex = 10;
-            this.lbl_Err_summary.Text = "error";
-            // 
-            // lbl_Err_password
-            // 
-            this.lbl_Err_password.AutoSize = true;
-            this.lbl_Err_password.ForeColor = System.Drawing.Color.Red;
-            this.lbl_Err_password.Location = new System.Drawing.Point(169, 196);
-            this.lbl_Err_password.Name = "lbl_Err_password";
-            this.lbl_Err_password.Size = new System.Drawing.Size(58, 26);
-            this.lbl_Err_password.TabIndex = 9;
-            this.lbl_Err_password.Text = "error";
-            // 
-            // lbl_Err_username
-            // 
-            this.lbl_Err_username.AutoSize = true;
-            this.lbl_Err_username.ForeColor = System.Drawing.Color.Red;
-            this.lbl_Err_username.Location = new System.Drawing.Point(151, 132);
-            this.lbl_Err_username.Name = "lbl_Err_username";
-            this.lbl_Err_username.Size = new System.Drawing.Size(58, 26);
-            this.lbl_Err_username.TabIndex = 8;
-            this.lbl_Err_username.Text = "error";
-            // 
-            // lbl_Err_server
-            // 
-            this.lbl_Err_server.AutoSize = true;
-            this.lbl_Err_server.ForeColor = System.Drawing.Color.Red;
-            this.lbl_Err_server.Location = new System.Drawing.Point(142, 67);
-            this.lbl_Err_server.Name = "lbl_Err_server";
-            this.lbl_Err_server.Size = new System.Drawing.Size(58, 26);
-            this.lbl_Err_server.TabIndex = 7;
-            this.lbl_Err_server.Text = "error";
             // 
             // btn_Login
             // 
@@ -131,14 +83,14 @@ namespace BackupRestore
             this.txt_password.PasswordChar = '*';
             this.txt_password.Size = new System.Drawing.Size(484, 36);
             this.txt_password.TabIndex = 5;
-            this.txt_password.Text = "nguyenne";
+            this.txt_password.Text = "1234";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(43, 196);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(114, 26);
+            this.label3.Size = new System.Drawing.Size(108, 25);
             this.label3.TabIndex = 4;
             this.label3.Text = "Password :";
             // 
@@ -158,7 +110,7 @@ namespace BackupRestore
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(39, 133);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(116, 26);
+            this.label2.Size = new System.Drawing.Size(111, 25);
             this.label2.TabIndex = 2;
             this.label2.Text = "Username :";
             // 
@@ -171,14 +123,14 @@ namespace BackupRestore
             this.txt_ServerName.Name = "txt_ServerName";
             this.txt_ServerName.Size = new System.Drawing.Size(484, 36);
             this.txt_ServerName.TabIndex = 1;
-            this.txt_ServerName.Text = "HDR1234";
+            this.txt_ServerName.Text = "DESKTOP-Q6N4J46";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(43, 68);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(85, 26);
+            this.label1.Size = new System.Drawing.Size(81, 25);
             this.label1.TabIndex = 0;
             this.label1.Text = "Server :";
             // 
@@ -199,10 +151,6 @@ namespace BackupRestore
         #endregion
 
         private System.Windows.Forms.GroupBox grb_Login;
-        private System.Windows.Forms.Label lbl_Err_summary;
-        private System.Windows.Forms.Label lbl_Err_password;
-        private System.Windows.Forms.Label lbl_Err_username;
-        private System.Windows.Forms.Label lbl_Err_server;
         private System.Windows.Forms.Button btn_Login;
         private System.Windows.Forms.TextBox txt_password;
         private System.Windows.Forms.Label label3;

@@ -49,7 +49,6 @@ namespace BackupRestore
 
         private bool checkLogin()
         {
-
             Program.serverName = txt_ServerName.Text;
             Program.userName = txt_username.Text;
             Program.password = txt_password.Text;

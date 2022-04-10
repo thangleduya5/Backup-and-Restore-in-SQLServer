@@ -10,13 +10,16 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.IO;
+using System.Globalization;
 
 namespace BackupRestore
 {
     public partial class FormMain : Form
     {
-        public static Database curentDB;
-        public static BackupInfo curentBK;
+        public static Database currentDB;
+        public static BackupInfo currentBK;
+        public static String currentPathDev;
+        public static String currentDev="";
 
         public FormMain()
         {
@@ -32,6 +35,43 @@ namespace BackupRestore
 
             showDBList();
             setListBK();
+            setupButton();
+        }
+
+        public void setupButton()
+        {
+            String query = "SELECT name  FROM sys.backup_devices " +
+                            "WHERE name = 'DEV_" + currentDB.name +"'";
+            try
+            {
+                using (SqlConnection cnn = new SqlConnection(Program.GetConectionString()))
+                using (SqlCommand comm = new SqlCommand(query, cnn))
+                {
+                    cnn.Open();
+                    SqlDataReader reader = comm.ExecuteReader();
+                    currentDev = "";
+                    while (reader.Read())
+                    {
+                        currentDev = reader.GetString(0);
+                    }
+
+                    reader.Close();
+                    reader.Dispose();
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                throw sqlEx;
+            }
+            if (currentDev.Equals(""))
+            {
+                btn_CreateDevice.Enabled = true;
+                btn_Backup.Enabled = false;
+            } 
+            else {
+                btn_CreateDevice.Enabled = false;
+                btn_Backup.Enabled = true;
+            }    
         }
 
         public void showDBList()
@@ -47,11 +87,12 @@ namespace BackupRestore
                 btn.Click += Btn_Db_Click;
                 flp_ListDb.Controls.Add(btn);
             }
-            curentDB = new Database()
+            currentDB = new Database()
             {
                 id = int.Parse(list[0].id.ToString()),
                 name = list[0].name.ToString()
             };
+            currentDev = "DEV_" + currentDB.name;
         }
 
         private void Btn_Db_Click(object sender, EventArgs e)
@@ -60,12 +101,14 @@ namespace BackupRestore
 
             lbl_DbName.Text = btn_clicked.Text;
 
-            curentDB = new Database()
+            currentDB = new Database()
             {
                 id = int.Parse(btn_clicked.Tag.ToString()),
                 name = btn_clicked.Text.ToString()
             };
+            currentDev = "DEV_" + currentDB.name;
             setListBK();
+            setupButton();
         }
 
         public static List<Database> getListDB()
@@ -110,7 +153,15 @@ namespace BackupRestore
         {
             String query = "SELECT position, description, backup_start_date , user_name " +
                             "FROM msdb.dbo.backupset " +
-                            "WHERE  database_name = '"+ curentDB.name +"' AND type = 'D' " +
+                            "WHERE  database_name='"+ currentDB.name +"' AND type='D' AND " +
+                            "backup_set_id >= " +
+                                "(SELECT MAX(backup_set_id) " +
+                                "FROM msdb.dbo.backupset " +
+                                "WHERE media_set_id = " +
+                                    "(SELECT  MAX(media_set_id) " +
+                                    "FROM msdb.dbo.backupset " +
+                                    "WHERE database_name = '" + currentDB.name + "' AND type = 'D') " +
+                                 "AND position = 1) " +
                             "ORDER BY position DESC";
             try
             {
@@ -182,36 +233,131 @@ namespace BackupRestore
 
         }
 
-        /*        public bool CreateDevice()
+        private void btn_Exit_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btn_Restore_Click(object sender, EventArgs e)
+        {
+            if (lsv_BackupVersions.Items.Count != 0)
+            {
+                ListViewItem item = lsv_BackupVersions.Items[0];
+                string position = item.SubItems[0].Text;
+                DateTime dateTimeFullBK = DateTime.Parse(item.SubItems[2].Text);
+                DateTime dateTimeNow = DateTime.Now;
+
+                DateTime timeEnter = DateTime.ParseExact(dtp_TimeRestore.Text
+                                            , "HH:mm:ss"
+                                            , CultureInfo.InvariantCulture);
+
+                DateTime dateEnter = DateTime.ParseExact(dtp_DateRestore.Text
+                                            , "dd-MM-yyyy"
+                                            , CultureInfo.InvariantCulture);
+
+                DateTime dateTimeEnter = new DateTime(dateEnter.Year, dateEnter.Month, dateEnter.Day, timeEnter.Hour, timeEnter.Minute, timeEnter.Second);
+
+                if (dateTimeEnter < dateTimeFullBK)
                 {
-                    String currentPath = this.GetType().Assembly.Location;
-
-                    String folderPath = currentPath.Substring(0, currentPath.LastIndexOf("\\"));
-
-                    DirectoryInfo directoryInfo = null;
-                    if (!Directory.Exists($"{folderPath}\\BackupFiles\\{curentDB.name}"))
+                    MessageBox.Show("Thời gian phục hồi phải sau thời gian fullbackup đó.");
+                    return;
+                }
+                else if (dateTimeEnter > DateTime.Now)
+                {
+                    MessageBox.Show("Thời gian phục hồi phải trước thời gian hiện tai.");
+                    return;
+                }
+                else
+                {
+/*                    if (bk.ValidateRestoreDBByTime())
                     {
-                        directoryInfo = Directory.CreateDirectory($"{folderPath}\\BackupFiles\\{curentDB.name}");
-                    }
-
-                    if (directoryInfo == null)
-                    {
-                        QueryStrings.CurrentPathDevice = $"{folderPath}\\BackupFiles\\{curentDB.name}\\{curentDB.name}.bak";
+                        bool isSuccess = bk.RestoreBDByTime(dateTimeEnter);
+                        if (isSuccess)
+                        {
+                            MessageBox.Show("Phục hồi thành công");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Không thể phục hồi do lỗi nào đó.");
+                        }
                     }
                     else
                     {
-                        QueryStrings.CurrentPathDevice = $"{directoryInfo.FullName}\\{curentDB.name}.bak";
-                    }
+                        MessageBox.Show("RECOVERY MODE phải là FULL.");
+                        return;
+                    }*/
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng backup database!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
-                    IEnumerable<Boolean> result = ExecuteQuery<Boolean>.Execute(ConnectionInfo, QueryStrings.CreateDevice, (sqlDataReader) =>
-                    {
-                        return SqlSupport.Read<Boolean>(sqlDataReader, "");
-                    });
+        private void btn_Backup_Click(object sender, EventArgs e)
+        {
+            String sql = "";
 
-                    this.CurrentDataBase = _currentDB;
+            if (chk_DelAllBeforeBackup.Checked)
+            {
+                sql = "BACKUP DATABASE " + currentDB.name + " TO " + currentDev + " WITH INIT";
+            }
+            else
+            {
+                sql = "BACKUP DATABASE " + currentDB.name + " TO " + currentDev ;
+            }
+            Console.WriteLine("SQL: " + sql);
+            Program.ExecuteNonQuery(sql);
+            setListBK();
+        }
 
-                    return result.FirstOrDefault();
-                }*/
+        public bool CreateDevice()
+        {
+            String folderPath = "D:\\BackupSQLServer";
 
+            DirectoryInfo directoryInfo = null;
+            if (!Directory.Exists($"{folderPath}\\{currentDB.name}"))
+            {
+                directoryInfo = Directory.CreateDirectory($"{folderPath}\\{currentDB.name}");
+            }
+
+            if (directoryInfo == null)
+            {
+                currentPathDev = $"{folderPath}\\{currentDB.name}\\{currentDB.name}.bak";
+            }
+            else
+            {
+                currentPathDev = $"{directoryInfo.FullName}\\{currentDB.name}.bak";
+            }
+
+            try
+            {
+                String sql = "EXEC sp_addumpdevice 'disk', 'DEV_" + currentDB.name + "', '" + currentPathDev + "'";
+                Console.WriteLine(sql);
+                using (SqlConnection cnn = new SqlConnection(Program.GetConectionString()))
+                using (SqlCommand comm = new SqlCommand(sql, cnn))
+                {
+                    cnn.Open();
+                    SqlDataReader sqlDataReader = comm.ExecuteReader();
+                    Console.WriteLine("OK đã hoàn thành");
+                    cnn.Close();
+
+                    return true;
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                Console.WriteLine("Lỗi: " + sqlEx);
+                return false;
+                throw sqlEx;
+            }
+            return true;
+        }
+
+        private void btn_CreateDevice_Click(object sender, EventArgs e)
+        {
+            CreateDevice();
+            setupButton();
+        }
     }
 }

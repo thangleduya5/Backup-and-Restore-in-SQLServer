@@ -38,6 +38,7 @@ namespace BackupRestore
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.flp_ListDb = new System.Windows.Forms.FlowLayoutPanel();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.button6 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
@@ -58,7 +59,6 @@ namespace BackupRestore
             this.label4 = new System.Windows.Forms.Label();
             this.lbl_BackupCount = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.button6 = new System.Windows.Forms.Button();
             this.btn_Backup = new System.Windows.Forms.Button();
             this.btn_Restore = new System.Windows.Forms.Button();
             this.btn_RestoreByTime = new System.Windows.Forms.Button();
@@ -193,6 +193,20 @@ namespace BackupRestore
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(194, 30);
             this.panel4.TabIndex = 1;
+            // 
+            // button6
+            // 
+            this.button6.FlatAppearance.BorderSize = 0;
+            this.button6.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.button6.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.button6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button6.Image = global::BackupRestore.Properties.Resources.icons8_database_view_16;
+            this.button6.Location = new System.Drawing.Point(7, 0);
+            this.button6.Margin = new System.Windows.Forms.Padding(5);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(43, 38);
+            this.button6.TabIndex = 1;
+            this.button6.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -405,20 +419,6 @@ namespace BackupRestore
             this.flowLayoutPanel1.Size = new System.Drawing.Size(1327, 50);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
-            // button6
-            // 
-            this.button6.FlatAppearance.BorderSize = 0;
-            this.button6.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
-            this.button6.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
-            this.button6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button6.Image = global::BackupRestore.Properties.Resources.icons8_database_view_16;
-            this.button6.Location = new System.Drawing.Point(7, 0);
-            this.button6.Margin = new System.Windows.Forms.Padding(5);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(43, 38);
-            this.button6.TabIndex = 1;
-            this.button6.UseVisualStyleBackColor = true;
-            // 
             // btn_Backup
             // 
             this.btn_Backup.FlatAppearance.BorderSize = 0;
@@ -428,11 +428,12 @@ namespace BackupRestore
             this.btn_Backup.Location = new System.Drawing.Point(5, 5);
             this.btn_Backup.Margin = new System.Windows.Forms.Padding(5, 5, 10, 5);
             this.btn_Backup.Name = "btn_Backup";
-            this.btn_Backup.Size = new System.Drawing.Size(159, 60);
+            this.btn_Backup.Size = new System.Drawing.Size(159, 45);
             this.btn_Backup.TabIndex = 0;
             this.btn_Backup.Text = "Sao Lưu";
             this.btn_Backup.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btn_Backup.UseVisualStyleBackColor = true;
+            this.btn_Backup.Click += new System.EventHandler(this.btn_Backup_Click);
             // 
             // btn_Restore
             // 
@@ -443,11 +444,12 @@ namespace BackupRestore
             this.btn_Restore.Location = new System.Drawing.Point(179, 5);
             this.btn_Restore.Margin = new System.Windows.Forms.Padding(5, 5, 10, 5);
             this.btn_Restore.Name = "btn_Restore";
-            this.btn_Restore.Size = new System.Drawing.Size(170, 60);
+            this.btn_Restore.Size = new System.Drawing.Size(170, 45);
             this.btn_Restore.TabIndex = 1;
             this.btn_Restore.Text = "Phục Hồi";
             this.btn_Restore.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btn_Restore.UseVisualStyleBackColor = true;
+            this.btn_Restore.Click += new System.EventHandler(this.btn_Restore_Click);
             // 
             // btn_RestoreByTime
             // 
@@ -458,7 +460,7 @@ namespace BackupRestore
             this.btn_RestoreByTime.Location = new System.Drawing.Point(364, 5);
             this.btn_RestoreByTime.Margin = new System.Windows.Forms.Padding(5, 5, 10, 5);
             this.btn_RestoreByTime.Name = "btn_RestoreByTime";
-            this.btn_RestoreByTime.Size = new System.Drawing.Size(214, 60);
+            this.btn_RestoreByTime.Size = new System.Drawing.Size(214, 45);
             this.btn_RestoreByTime.TabIndex = 2;
             this.btn_RestoreByTime.Text = "Phục hồi theo TG";
             this.btn_RestoreByTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -473,11 +475,12 @@ namespace BackupRestore
             this.btn_CreateDevice.Location = new System.Drawing.Point(593, 5);
             this.btn_CreateDevice.Margin = new System.Windows.Forms.Padding(5, 5, 10, 5);
             this.btn_CreateDevice.Name = "btn_CreateDevice";
-            this.btn_CreateDevice.Size = new System.Drawing.Size(169, 60);
+            this.btn_CreateDevice.Size = new System.Drawing.Size(169, 45);
             this.btn_CreateDevice.TabIndex = 3;
             this.btn_CreateDevice.Text = "Tạo Device";
             this.btn_CreateDevice.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btn_CreateDevice.UseVisualStyleBackColor = true;
+            this.btn_CreateDevice.Click += new System.EventHandler(this.btn_CreateDevice_Click);
             // 
             // btn_Exit
             // 
@@ -488,11 +491,12 @@ namespace BackupRestore
             this.btn_Exit.Location = new System.Drawing.Point(777, 5);
             this.btn_Exit.Margin = new System.Windows.Forms.Padding(5);
             this.btn_Exit.Name = "btn_Exit";
-            this.btn_Exit.Size = new System.Drawing.Size(130, 60);
+            this.btn_Exit.Size = new System.Drawing.Size(130, 45);
             this.btn_Exit.TabIndex = 4;
             this.btn_Exit.Text = "Thoát";
             this.btn_Exit.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btn_Exit.UseVisualStyleBackColor = true;
+            this.btn_Exit.Click += new System.EventHandler(this.btn_Exit_Click);
             // 
             // FormMain
             // 
