@@ -18,8 +18,10 @@ namespace BackupRestore
     {
         public static Database currentDB;
         public static BackupInfo currentBK;
-        public static String currentPathDev;
+        public static String currentPathDev="";
         public static String currentDev="";
+        public static String folderPath = "D:\\BackupSQLServer";
+
 
         public FormMain()
         {
@@ -32,8 +34,8 @@ namespace BackupRestore
                 TimerAction.AddTimer((args, e) => { InvokeUI(() => { this.lbl_Time.Text = DateTime.Now.ToLongTimeString(); }); }, 1000);
             }));
             thread.Start();
-
             showDBList();
+            lbl_DbName.Text = currentDB.name;
             setListBK();
             setupButton();
         }
@@ -53,6 +55,7 @@ namespace BackupRestore
                     while (reader.Read())
                     {
                         currentDev = reader.GetString(0);
+                        currentPathDev = $"{folderPath}\\{currentDB.name}\\{currentDB.name}.bak";
                     }
 
                     reader.Close();
@@ -223,7 +226,7 @@ namespace BackupRestore
 
             foreach (var item in backupInfos)
             {
-                ListViewItem row = new ListViewItem(new string[] { item.position.ToString(), item.description, item.backupDateTime.ToString("MM/dd/yyyy HH:mm:ss"), item.userBackup });
+                ListViewItem row = new ListViewItem(new string[] { item.position.ToString(), item.description, item.backupDateTime.ToString("dd/MM/yyyy HH:mm:ss"), item.userBackup });
                 lsv_BackupVersions.Items.Add(row);
             }
         }
@@ -240,57 +243,29 @@ namespace BackupRestore
 
         private void btn_Restore_Click(object sender, EventArgs e)
         {
-            if (lsv_BackupVersions.Items.Count != 0)
+            if (lsv_BackupVersions.SelectedItems.Count != 0)
             {
-                ListViewItem item = lsv_BackupVersions.Items[0];
+                ListViewItem item = lsv_BackupVersions.SelectedItems[0];
                 string position = item.SubItems[0].Text;
-                DateTime dateTimeFullBK = DateTime.Parse(item.SubItems[2].Text);
-                DateTime dateTimeNow = DateTime.Now;
 
-                DateTime timeEnter = DateTime.ParseExact(dtp_TimeRestore.Text
-                                            , "HH:mm:ss"
-                                            , CultureInfo.InvariantCulture);
-
-                DateTime dateEnter = DateTime.ParseExact(dtp_DateRestore.Text
-                                            , "dd-MM-yyyy"
-                                            , CultureInfo.InvariantCulture);
-
-                DateTime dateTimeEnter = new DateTime(dateEnter.Year, dateEnter.Month, dateEnter.Day, timeEnter.Hour, timeEnter.Minute, timeEnter.Second);
-
-                if (dateTimeEnter < dateTimeFullBK)
+                String sql = "ALTER DATABASE "+ currentDB.name +" SET SINGLE_USER WITH ROLLBACK IMMEDIATE USE tempdb" +
+                    " RESTORE DATABASE " + currentDB.name +
+                    " FROM  " + currentDev +
+                    " WITH FILE = "+ Int32.Parse(position) +", REPLACE" +
+                    " ALTER DATABASE " + currentDB.name + " SET MULTI_USER";
+                try
                 {
-                    MessageBox.Show("Thời gian phục hồi phải sau thời gian fullbackup đó.");
-                    return;
+                    Program.ExecuteNonQuery(sql);
+                    MessageBox.Show("Phục hồi thành công ");
                 }
-                else if (dateTimeEnter > DateTime.Now)
+                catch (SqlException sqlEx)
                 {
-                    MessageBox.Show("Thời gian phục hồi phải trước thời gian hiện tai.");
-                    return;
-                }
-                else
-                {
-/*                    if (bk.ValidateRestoreDBByTime())
-                    {
-                        bool isSuccess = bk.RestoreBDByTime(dateTimeEnter);
-                        if (isSuccess)
-                        {
-                            MessageBox.Show("Phục hồi thành công");
-                        }
-                        else
-                        {
-                            MessageBox.Show("Không thể phục hồi do lỗi nào đó.");
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("RECOVERY MODE phải là FULL.");
-                        return;
-                    }*/
+                    MessageBox.Show("Phục hồi thất bại");
                 }
             }
             else
             {
-                MessageBox.Show("Vui lòng backup database!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Vui lòng chọn bản backup!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -313,8 +288,6 @@ namespace BackupRestore
 
         public bool CreateDevice()
         {
-            String folderPath = "D:\\BackupSQLServer";
-
             DirectoryInfo directoryInfo = null;
             if (!Directory.Exists($"{folderPath}\\{currentDB.name}"))
             {
@@ -358,6 +331,86 @@ namespace BackupRestore
         {
             CreateDevice();
             setupButton();
+        }
+
+        private void btn_RestoreByTime_Click(object sender, EventArgs e)
+        {
+            if (lsv_BackupVersions.Items.Count != 0)
+            {
+                ListViewItem item = lsv_BackupVersions.Items[0];
+                string position = item.SubItems[0].Text;
+                DateTime dateTimeFullBK = DateTime.Parse(item.SubItems[2].Text);
+                DateTime dateTimeNow = DateTime.Now;
+
+                DateTime timeEnter = DateTime.ParseExact(dtp_TimeRestore.Text
+                                            , "HH:mm:ss"
+                                            , CultureInfo.InvariantCulture);
+
+                DateTime dateEnter = DateTime.ParseExact(dtp_DateRestore.Text
+                                            , "dd-MM-yyyy"
+                                            , CultureInfo.InvariantCulture);
+
+                DateTime dateTimeEnter = new DateTime(dateEnter.Year, dateEnter.Month, dateEnter.Day, timeEnter.Hour, timeEnter.Minute, timeEnter.Second);
+                Console.WriteLine("dateTimeFullBK: " + dateTimeFullBK);
+                Console.WriteLine("dateTimeEnter: " + dateTimeEnter);
+                if (dateTimeEnter < dateTimeFullBK)
+                {
+                    MessageBox.Show("Thời gian phục hồi phải sau thời gian fullbackup đó.");
+                    return;
+                }
+                else if (dateTimeEnter > DateTime.Now)
+                {
+                    MessageBox.Show("Thời gian phục hồi phải trước thời gian hiện tai.");
+                    return;
+                }
+                else
+                {
+                    String logPath = $"{currentPathDev.Substring(0, currentPathDev.LastIndexOf("\\"))}\\{currentDB.name}.trn";
+                    String firstSql = "ALTER DATABASE "+ currentDB.name +" SET SINGLE_USER WITH ROLLBACK IMMEDIATE " +
+                                      "BACKUP LOG " + currentDB.name + " TO DISK = '"+ logPath +"' WITH INIT USE tempdb";
+                    try
+                    {
+                        Program.ExecuteNonQuery(firstSql);
+                    } 
+                    catch(SqlException sqlEx)
+                    {
+                        MessageBox.Show("Lỗi Backup log");
+                        return;
+
+                    }
+
+                    String secondSql = "RESTORE DATABASE "+ currentDB.name +" FROM DISK = '"+ currentPathDev +"' WITH NORECOVERY, REPLACE";
+                    try
+                    {
+                        Program.ExecuteNonQuery(secondSql);
+                    }
+                    catch (SqlException sqlEx)
+                    {
+                        MessageBox.Show("Lỗi Restore CSDL với norecovery");
+                        return;
+                    }
+
+                    String thirdSql = "RESTORE DATABASE "+ currentDB.name +" FROM DISK = '" + logPath + "' WITH STOPAT = '"+ dateTimeEnter.ToString("yyyy-MM-dd HH:mm:ss") + "'";
+                    try
+                    {
+                        Program.ExecuteNonQuery(thirdSql);
+                    }
+                    catch (SqlException sqlEx)
+                    {
+                        MessageBox.Show("Lỗi Restore CSDL từ file log");
+                        return;
+
+                    }
+
+                    String lastSql = "ALTER DATABASE "+ currentDB.name +" SET MULTI_USER";
+                    Program.ExecuteNonQuery(lastSql);
+                    MessageBox.Show("Phục hồi thành công");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng backup database!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

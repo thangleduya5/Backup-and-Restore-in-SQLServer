@@ -465,6 +465,7 @@ namespace BackupRestore
             this.btn_RestoreByTime.Text = "Phục hồi theo TG";
             this.btn_RestoreByTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btn_RestoreByTime.UseVisualStyleBackColor = true;
+            this.btn_RestoreByTime.Click += new System.EventHandler(this.btn_RestoreByTime_Click);
             // 
             // btn_CreateDevice
             // 
